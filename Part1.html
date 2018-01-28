@@ -21,11 +21,11 @@ function preload() {
     game.load.image('ground','assets/platform.png');
     game.load.image('star','assets/star.png');
     game.load.spritesheet('dude','assets/dude.png',32,48);
+    game.load.audio('dzwiek','assets/cling_1.wav');
 }
 var player;
 var platforms;
 var cursors;
-
 var stars;
 var score = 0;
 var scoreText;
@@ -62,11 +62,10 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
     scoreText = game.add.text(16,16,'score: 0',{fontSize: '32px',fill:'#000'});
     this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    
+    this.spaceKey2 = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
     bum = game.add.emitter(0,0,100);
     bum.makeParticles('star');
-    bum.emitter.gravity = 200;
-    
+    bum.emitter.gravity = 200;  
 }
     
        
@@ -102,14 +101,33 @@ function hittheroadjack(player,gwiazdka)
     {
         bum.x = gwiazdka.x;
         bum.y = gwiazdka.y;
-        bum.start(true,500,null,20); 
+        bum.start(true,500,null,20);
+        game.sound.play('dzwiek');
         gwiazdka.kill();
         score += 10;
         scoreText.text = 'Score: ' + score;
     }
-    if (score == 120) game.add.text(155, 130, 'You won! Press space to restart', 
-			{fill: '#fff'});
+if (score === 120) 
+    { napis = game.add.text(155, 130, 'You won! Press ENTER to restart.', {fill: '#fff'});
+    }
+function reset(){
+    score = 0;
+    napis.visible = false;
+    scoreText.text = "Score: "+score;
+    player.body.x = 32;
+    player.body.y = game.world.height - 150;
+    for(var i=0;i<12;i++)
+        {
+            var star = stars.create(i * 70,0,'star');
+            star.body.gravity.y = 300;
+            star.body.bounce.y = 0.7 + Math.random() * 0.2;
+        }
 }
+    if(this.spaceKey2.isDown && score == 120){
+        reset(); 
+    }
+}
+
     </script>
 </body>
 </html>
